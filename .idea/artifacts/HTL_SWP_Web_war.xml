@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="HTL_SWP_Web:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>false</exploded>
+        <module>HTL_SWP_Web</module>
+        <packaging>war</packaging>
+        <unpackNestedArchives>false</unpackNestedArchives>
+      </options>
+    </properties>
+    <root id="archive" name="HTL_SWP_Web-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="HTL_SWP_Web:war exploded" />
+    </root>
+  </artifact>
+</component>
