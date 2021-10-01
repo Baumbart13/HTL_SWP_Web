@@ -9,7 +9,7 @@
         <module name="HTL_SWP_Web" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17">
       <module name="HTL_SWP_Web" target="1.8" />
     </bytecodeTargetLevel>
   </component>
