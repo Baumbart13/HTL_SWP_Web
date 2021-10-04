@@ -1,5 +1,7 @@
 package at.htlanich.htl_swp_web.servlets;
 
+import at.htlanich.htl_swp_web.models.LoginService;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -49,6 +51,7 @@ public class LoginSuccess extends HttpServlet {
         String pwd = request.getParameter("pwd");
 
         // Lösung der Aufgabe
+        boolean success = LoginService.getInstance().canLogin(fName, lName, pwd);
 
         // Werte für die JSP als Attribute festhalten
         request.setAttribute("foreName", fName);
@@ -57,8 +60,13 @@ public class LoginSuccess extends HttpServlet {
         request.setAttribute("nickName", "Baumi");
 
         // Weiterleitung
-        RequestDispatcher d = request.getRequestDispatcher("Welcome.jsp"); // Ziel wohin weitergeleitet werden soll angeben
-        d.forward(request,  response);
+        if(success) {
+            RequestDispatcher d = request.getRequestDispatcher("Welcome.jsp"); // Ziel wohin weitergeleitet werden soll angeben
+            d.forward(request, response);
+        }else{
+            RequestDispatcher d = request.getRequestDispatcher("index.html"); // Ziel wohin weitergeleitet werden soll angeben
+            d.forward(request, response);
+        }
 
     }
 
