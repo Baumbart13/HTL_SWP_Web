@@ -6,17 +6,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
-public class LoginService {
+public class RegisterService {
     // SINGLETON PATTERN
 
-    private LoginService() {
+    private RegisterService() {
 
     }
 
-    private static LoginService INSTANCE = null;
+    private static RegisterService INSTANCE = null;
 
-    public static LoginService getInstance() {
-        return INSTANCE == null ? new LoginService() : INSTANCE;
+    public static RegisterService getInstance() {
+        return INSTANCE == null ? new RegisterService() : INSTANCE;
     }
 
     public boolean canLogin(String fName, String lName, String pwd) throws ServletException {
@@ -27,7 +27,7 @@ public class LoginService {
 
         try {
             con = db.getConnection();
-            db.canLogin(con, email, pwd);
+            db.canRegister(con, email, pwd);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         } finally {

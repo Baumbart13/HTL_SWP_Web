@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class LoginSuccess
  */
 @WebServlet("/LoginSuccess")
-public class LoginSuccess extends HttpServlet {
+public class Anmelden extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginSuccess() {
+    public Anmelden() {
         super();
         // TODO Auto-generated constructor stub
     }

@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class DBManager {
     // SINGLETON PATTERN
 
-    private DBManager(){
+    private DBManager() {
 
     }
 
@@ -19,14 +19,14 @@ public class DBManager {
     private String user = "";
     private String pwd = "";
 
-    public static DBManager getInstance(){
-        return INSTANCE==null ? new DBManager() : INSTANCE;
+    public static DBManager getInstance() {
+        return INSTANCE == null ? new DBManager() : INSTANCE;
     }
 
     public Connection getConnection() throws SQLException { // TODO
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        }catch(ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             System.err.printf("JDBC is not installed. Please first install the driver and try to run this program afterwards.%n");
             System.exit(-1);
         }
@@ -38,23 +38,44 @@ public class DBManager {
     }
 
     public void releaseConnection(Connection con) throws SQLException {
-        if(con == null || con.isClosed()){
+        if (con == null || con.isClosed()) {
             return;
         }
         con.close();
     }
 
-    public boolean canLogin(Connection con, String email, String pwd){
+    public boolean canLogin(Connection con, String email, String pwd) {
         // TODO
         var sql = "select count(*) from benutzer where email = ? and passwort = ?;";
         var success = false;
+
+        try (var stmnt = con.prepareStatement(sql)) {
+            stmnt.setString(1, email);
+            stmnt.setString(2, pwd);
+
+            var rs = stmnt.executeQuery();
+            if (rs != null) {
+                var count = rs.getInt(1);
+                if (count > 0) success = true;
+            }
+        } catch (SQLException e) {
+
+        }
+        return success;
+    }
+
+    public boolean canRegister(Connection con, String email, String pwd){
+        var sql = "";
+        var success = false;
+
         try(var stmnt = con.prepareStatement(sql)){
             stmnt.setString(1, email);
             stmnt.setString(2, pwd);
+
             var rs = stmnt.executeQuery();
             if(rs != null){
                 var count = rs.getInt(1);
-                if(count>0) success = true;
+                if(count > 0) success = true;
             }
         }catch (SQLException e){
 
