@@ -1,8 +1,9 @@
 package at.htlanich.htl_swp_web.servlets;
 
-import java.io.IOException;
+import at.htlanich.htl_swp_web.models.RegisterService;
+import at.htlanich.htl_swp_web.models.User;
 
-import javax.servlet.RequestDispatcher;
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,12 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class DoRegister
+ * Servlet implementation class RegisterServlet
  */
-@WebServlet(name = "DoRegister", value = "/DoRegister")
+@WebServlet("/DoRegister")
 public class DoRegister extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1L;
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -24,61 +25,71 @@ public class DoRegister extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-     */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-    }
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.sendRedirect("Register.jsp");
+	}
 
-    /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-     */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
+	/*<form action="RegistrationServlet" method="post">
+		<label>Email</label>
+		<input type="text" name="email">
+		<br>
+		<label>Username</label>
+		<input type="text" name="username">
+		<br>
+		<label>Firstname</label>
+		<input type="text" name="firstname">
+		<br>
+		<label>Lastname</label>
+		<input type="text" name="lastname">
+		<br>
+		<label>Password</label>
+		<input type="password" name="password">
+		<br>
+		<label>Repeat password</label>
+		<input type="password" name="passwordrepeated">
+		<br>
+		<input type="submit" value="Registrate">
+	</form>
+	 */
+	
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		final String ERROR_KEY = "error";
+		var email = request.getParameter("email");
+		var uName = request.getParameter("username");
+		var fName = request.getParameter("firstname");
+		var lName = request.getParameter("lastname");
+		var pwd = request.getParameter("password");
+		var pwdRepeat = request.getParameter("passwordrepeated");
 
-        for(String x : request.getParameterMap().keySet()){
-            System.out.println(request.getParameter(x));
-        }
+		var user = new User(email, uName, fName, lName, pwd);
 
-        while(request.getAttributeNames().hasMoreElements()){
-            System.out.println(request.getAttributeNames().nextElement());
-        }
+		if(!pwd.equals(pwdRepeat)){
+			request.setAttribute(ERROR_KEY, "Password must be identical!");
+		}
 
-        String fName = (String)request.getParameter("fname");
-        String lName = (String)request.getParameter("lname");
-        String pwd = (String)request.getParameter("pwd");
-        String nickName = (String)request.getParameter("nname");
+		var canRegister = RegisterService.getInstance().canRegister(user);
+		if(canRegister){
+			canRegister = RegisterService.getInstance().insertUser(user);
+		}
 
-        RequestDispatcher d;
-        boolean loopBackToRegister = true;
+		if(!canRegister){
+			request.setAttribute(ERROR_KEY, "We were unable to register your account. Probably it is already registered.");
+		}
 
-        if(fName.equalsIgnoreCase(nickName)){
-            request.setAttribute("fail", "ForeName cannot equal nickname");
+		//wenn alles passt zum index/login
+		/* DEBUG
+		if(canRegister){
+			request.getRequestDispatcher("Login.jsp").forward(request, response);
+		}else{
+			request.getRequestDispatcher("Register.jsp").forward(request, response);
+		}*/
+		request.getRequestDispatcher("Welcome.jsp").forward(request, response);
+	}
 
-        }else if(lName == null){
-            request.setAttribute("fail", "Last name cannot be empty");
-
-        } else if(nickName == null){
-            request.setAttribute("fail", "You must set a nickname");
-
-        }else if(pwd == null){
-            request.setAttribute("fail", "Why don't you want to set a password?!?!");
-
-        }else{
-            request.setAttribute("foreName", fName);
-            request.setAttribute("lastName", lName);
-            request.setAttribute("passwd", pwd);
-            request.setAttribute("nickName", nickName);
-            loopBackToRegister = false;
-        }
-
-        if(loopBackToRegister){
-            d = request.getRequestDispatcher("Register.html");
-        }else{
-            d = request.getRequestDispatcher("Welcome.jsp");
-        }
-
-        d.forward(request, response);
-    }
 }

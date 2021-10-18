@@ -1,45 +1,69 @@
 package at.htlanich.htl_swp_web.models;
 
-import javax.servlet.ServletException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.List;
+
+import javax.servlet.ServletException;
 
 public class LoginService {
-    // SINGLETON PATTERN
+	private static LoginService instance = null;
 
-    private LoginService() {
+	private LoginService() {
+	}
 
-    }
+	public static LoginService getInstance() {
+		if (instance == null) {
+			instance = new LoginService();
+		}
+		return instance;
+	}
 
-    private static LoginService INSTANCE = null;
+	public boolean canLogin(String user, String password)
+			throws ServletException {
+		//System.out.println(user + password);
+		var db = DBManager.getInstance();
+		Connection con = null;
+		var success = false;
 
-    public static LoginService getInstance() {
-        return INSTANCE == null ? new LoginService() : INSTANCE;
-    }
+		try {
+			con = db.getConnection();
+			success = db.canLogin(con, user, password);
+		} catch (Exception ex) {
+				throw new ServletException(ex.getMessage());
+		}finally{
+			try{
+				if(con != null){
+						db.relesaeConnection(con);
+				}
+			
+			}catch(Exception ex){
+				throw new ServletException(ex.getMessage());
+			}
+		}
+		return success;
+	}
 
-    public boolean canLogin(String fName, String lName, String pwd) throws ServletException {
+	public List<User> getUsers() throws ServletException{
+		//System.out.println(user + password);
+		var db = DBManager.getInstance();
+		Connection con = null;
+		List<User> l;
 
-        DBManager db = DBManager.getInstance();
-        Connection con = null;
-        var email = fName + "." + lName + "@gmail.com";
+		try {
+			con = db.getConnection();
+			l = db.getUsers(con);
+		} catch (Exception ex) {
+			throw new ServletException(ex.getMessage());
+		}finally{
+			try{
+				if(con != null){
+					db.relesaeConnection(con);
+				}
 
-        try {
-            con = db.getConnection();
-            db.canLogin(con, email, pwd);
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-        } finally {
-            try {
-                if (con != null) {
-                    db.releaseConnection(con);
-                }
-            } catch (Exception e) {
-                // NO Action
-            }
-        }
-
-        return false;
-    }
+			}catch(Exception ex){
+				throw new ServletException(ex.getMessage());
+			}
+		}
+		return l;
+	}
 }

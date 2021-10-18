@@ -2,44 +2,64 @@ package at.htlanich.htl_swp_web.models;
 
 import javax.servlet.ServletException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.LinkedList;
 
 public class RegisterService {
-    // SINGLETON PATTERN
+	private static RegisterService instance = null;
 
-    private RegisterService() {
+	private RegisterService() {
+	}
 
-    }
+	public static RegisterService getInstance() {
+		if (instance == null) {
+			instance = new RegisterService();
+		}
+		return instance;
+	}
+	
+	public boolean canRegister(User user) throws ServletException {
+		// only check if this email is already inside of the database
+		var db = DBManager.getInstance();
+		Connection con = null;
+		var success = true;
 
-    private static RegisterService INSTANCE = null;
+		try{
+			con = db.getConnection();
+			success = db.canRegister(con, user);
+		}catch (SQLException e){
+			success = false;
+			throw new ServletException(e.getMessage());
+		}finally{
+			try{
+				if(con!=null){
+					db.relesaeConnection(con);
+				}
+			}catch (SQLException e){
+				success = false;
+				throw new ServletException(e.getMessage());
+			}
+		}
+		return success;
+	}
+	
+	public boolean insertUser(User user) throws ServletException{
+		// insert the requested user into the database
+		var db = DBManager.getInstance();
+		Connection con = null;
 
-    public static RegisterService getInstance() {
-        return INSTANCE == null ? new RegisterService() : INSTANCE;
-    }
-
-    public boolean canLogin(String fName, String lName, String pwd) throws ServletException {
-
-        DBManager db = DBManager.getInstance();
-        Connection con = null;
-        var email = fName + "." + lName + "@gmail.com";
-
-        try {
-            con = db.getConnection();
-            db.canRegister(con, email, pwd);
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
-        } finally {
-            try {
-                if (con != null) {
-                    db.releaseConnection(con);
-                }
-            } catch (Exception e) {
-                // NO Action
-            }
-        }
-
-        return false;
-    }
+		try{
+			con = db.getConnection();
+			return db.insertUser(con, user);
+		}catch (Exception e){
+			throw new ServletException(e.getMessage());
+		}finally{
+			try{
+				if(con!=null){
+					db.relesaeConnection(con);
+				}
+			}catch (SQLException e){
+				throw new ServletException(e.getMessage());
+			}
+		}
+	}
 }
