@@ -82,13 +82,9 @@ public class DoRegister extends HttpServlet {
 			request.setAttribute(ERROR_KEY, "We were unable to register your account. Probably it is already registered.");
 		}
 
-		//wenn alles passt zum index/login
-		/* DEBUG
-		if(canRegister){
-			request.getRequestDispatcher("Login.jsp").forward(request, response);
-		}else{
-			request.getRequestDispatcher("Register.jsp").forward(request, response);
-		}*/
+		/*var session = request.getSession();
+		session.setAttribute("username", user.getUsername());*/
+
 		request.getRequestDispatcher("Welcome.jsp").forward(request, response);
 	}
 

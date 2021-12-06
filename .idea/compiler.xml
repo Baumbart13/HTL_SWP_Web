@@ -11,6 +11,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="17">
       <module name="HTL_SWP_Web" target="16" />
+      <module name="Notizen" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
